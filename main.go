@@ -1,5 +1,6 @@
 /*
-Copyright © 2023 NAME HERE <Salvatore Cirone>
+Copyright © 2023 NAME HERE <EMAIL ADDRESS>
+
 */
 package main
 
