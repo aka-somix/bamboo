@@ -57,7 +57,7 @@ func (tm *templateManagerImpl) DownloadTemplate(author string, name string, fold
 
 	template := tm.GetTemplateInfo(author, name)
 
-	fmt.Printf("Downloading template %s to folder: %s", template.Name, folderPath)
+	fmt.Printf("Downloading template %s to folder: %s \n", template.Name, folderPath)
 
 	return nil
 }
