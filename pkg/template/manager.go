@@ -4,6 +4,12 @@
 
 package template
 
+import (
+	"errors"
+	"fmt"
+	"os"
+)
+
 
 type templateManagerImpl struct {}
 
@@ -36,4 +42,22 @@ func (tm *templateManagerImpl) GetTemplateInfo(author string, name string) Templ
 			Description: "A Random Test Template",
 			Path: "./ciao",
 		}
+}
+
+func (tm *templateManagerImpl) DownloadTemplate(author string, name string, folderPath string) error{
+
+	// if the folder specified does not exist
+	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
+        // ...try create the folder
+		if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
+			// ... catch creation errors
+			return errors.New("folder does not exist and could not be created")
+		}
+    }
+
+	template := tm.GetTemplateInfo(author, name)
+
+	fmt.Printf("Downloading template %s to folder: %s", template.Name, folderPath)
+
+	return nil
 }
