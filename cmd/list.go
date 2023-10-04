@@ -26,14 +26,15 @@ var listCmd = &cobra.Command{
 		
 		// Print Header
 		fmt.Println()
-		fmt.Println("+-----------------------------------------------------")
-		fmt.Printf("| List of templates for %s \n", author)
-		fmt.Println("+-----------------------------------------------------")
+		fmt.Println()
+		fmt.Printf("List of templates for %s \n", author)
+		fmt.Println()
 
 
 		// Print Body
 		for _,template := range templates {
-			fmt.Printf("|\t🎋 %s | Created by %s \n", template.Name, template.Author)
+			fmt.Printf(" 🎋 %s\t %s \n", template.Name, template.Description)
+			fmt.Println()
 		}
 	},
 }

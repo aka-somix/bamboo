@@ -16,8 +16,24 @@ func (tm *templateManagerImpl) ListTemplatesInfo(author string) []Template {
 	return []Template{
 		{
 			Name: "Test",
-			Author: "Somix",
+			Author: author,
+			Description: "A Random Test Template",
+			Path: "./ciao",
+		},
+		{
+			Name: "Test2",
+			Author: author,
+			Description: "A Random Test Template",
 			Path: "./ciao",
 		},
 	}
+}
+
+func (tm *templateManagerImpl) GetTemplateInfo(author string, name string) Template {
+	return Template {
+			Name: name,
+			Author: author,
+			Description: "A Random Test Template",
+			Path: "./ciao",
+		}
 }
