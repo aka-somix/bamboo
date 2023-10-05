@@ -22,9 +22,9 @@ func NewTemplateManager() TemplateManager {
 }
 
 func (tm *templateManagerImpl) ListTemplatesInfo(author string) []Template {
-	templateTable := aws.TemplatesTable{
-		Client: dynamodb.New(dynamodb.Options{}),
-		TableName: "Test",
+	templateTable := aws.BambooTable{
+		Client: dynamodb.New(dynamodb.Options{Region: "eu-west-1"}),
+		TableName: "BambooTemplatesTable",
 	}
 
 	itemsFound, _ := templateTable.QueryTemplates(author)

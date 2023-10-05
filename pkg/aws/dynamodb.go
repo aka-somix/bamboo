@@ -8,13 +8,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
 
-type TemplatesTable struct {
+type BambooTable struct {
 	Client *dynamodb.Client
 	TableName      string
 }
 
 
-func (t TemplatesTable) QueryTemplates(author string) ([]map[string]types.AttributeValue, error) {
+func (t BambooTable) QueryTemplates(author string) ([]map[string]types.AttributeValue, error) {
 
 	response, err := t.Client.Query(
 		context.TODO(), 
@@ -32,5 +32,51 @@ func (t TemplatesTable) QueryTemplates(author string) ([]map[string]types.Attrib
 	}
 
 	return response.Items, nil
+}
 
+
+func (t BambooTable) Create() error {
+	_, err := t.Client.CreateTable(
+		context.TODO(),
+		&dynamodb.CreateTableInput{
+			TableName: aws.String(t.TableName),
+			KeySchema: []types.KeySchemaElement{
+				{
+					AttributeName: aws.String("Author"),
+					KeyType: types.KeyTypeHash,
+				},
+				{
+					AttributeName: aws.String("Name"),
+					KeyType: types.KeyTypeRange,
+				},
+			},
+			AttributeDefinitions: []types.AttributeDefinition{
+				{
+					AttributeName: aws.String("Author"),
+					AttributeType: types.ScalarAttributeTypeS,
+				},
+				{
+					AttributeName: aws.String("Name"),
+					AttributeType: types.ScalarAttributeTypeS,
+				},
+			},
+			BillingMode: types.BillingModePayPerRequest,
+			TableClass: types.TableClassStandardInfrequentAccess,
+			// TODO aka-somix: Commented for testing, remove comment afterward
+			// DeletionProtectionEnabled: aws.Bool(true), 
+			Tags: []types.Tag{
+				{
+					Key: aws.String("project"),
+					Value: aws.String("bamboo"),
+				},
+			},
+		}, 
+	)
+
+	if err != nil {
+		// TODO aka-somix: better error management
+		return err
+	}
+
+	return nil
 }
