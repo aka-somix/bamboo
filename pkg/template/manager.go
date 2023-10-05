@@ -61,3 +61,10 @@ func (tm *templateManagerImpl) DownloadTemplate(author string, name string, fold
 
 	return nil
 }
+
+func (tm *templateManagerImpl) CreateTemplate(t Template,  sourcePath string) error{
+
+	fmt.Printf("Creating template %s from folder: %s \n", t.Name, sourcePath)
+
+	return nil
+}

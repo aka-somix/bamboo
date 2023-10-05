@@ -1,7 +1,6 @@
 package prompt
 
 import (
-	"errors"
 	"fmt"
 	"os"
 
@@ -9,15 +8,7 @@ import (
 )
 
 
-func GetInput(pc PromptContent) string {
-
-	// input validation
-    validate := func(input string) error {
-        if len(input) <= 0 {
-            return errors.New(pc.ErrorMsg)
-        }
-        return nil
-    }
+func GetInput(pc PromptContent, validate promptui.ValidateFunc) string {
 
     templates := &promptui.PromptTemplates{
         Prompt:  "{{ . }} ",
@@ -56,6 +47,6 @@ func GetSelect(pc PromptContent, items []string) string {
         fmt.Printf("Prompt failed %v\n", err)
         os.Exit(1)
     }
-    
+
     return result
 }
