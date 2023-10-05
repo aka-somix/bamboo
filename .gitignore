@@ -21,3 +21,6 @@
 go.work
 
 *.nover*
+
+# Bin folder (build output)
+bin
