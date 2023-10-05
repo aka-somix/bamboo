@@ -16,7 +16,7 @@ func ValidateName(name string) error {
 func ValidateDescription(description string) error {
 
 	if len(description) > 100 {
-		return errors.New("name is too long")
+		return errors.New("description is too long")
 	}
 
 	return nil;

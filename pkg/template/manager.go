@@ -8,6 +8,9 @@ import (
 	"errors"
 	"fmt"
 	"os"
+
+	"github.com/aka-somix/bamboo/pkg/aws"
+	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
 
@@ -19,6 +22,18 @@ func NewTemplateManager() TemplateManager {
 }
 
 func (tm *templateManagerImpl) ListTemplatesInfo(author string) []Template {
+	templateTable := aws.TemplatesTable{
+		Client: dynamodb.New(dynamodb.Options{}),
+		TableName: "Test",
+	}
+
+	itemsFound, _ := templateTable.QueryTemplates(author)
+
+	fmt.Println("Items Found on dynamodb:")
+	for _, item := range itemsFound {
+		fmt.Printf("%v \n", item)
+	}
+
 	return []Template{
 		{
 			Name: "Test",
@@ -32,7 +47,7 @@ func (tm *templateManagerImpl) ListTemplatesInfo(author string) []Template {
 			Description: "A Random Test Template",
 			Path: "./ciao",
 		},
-	}
+	};
 }
 
 func (tm *templateManagerImpl) GetTemplateInfo(author string, name string) Template {
