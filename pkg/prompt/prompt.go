@@ -25,11 +25,9 @@ func GetInput(pc PromptContent, validate promptui.ValidateFunc) string {
 
     result, err := prompt.Run()
     if err != nil {
-        fmt.Printf("Prompt failed %v\n", err)
+        fmt.Printf("Error: %v\n", err)
         os.Exit(1)
     }
-
-    fmt.Printf("Input: %s\n", result)
 
     return result
 }
@@ -44,7 +42,7 @@ func GetSelect(pc PromptContent, items []string) string {
 	_, result, err := prompt.Run()
 
     if err != nil {
-        fmt.Printf("Prompt failed %v\n", err)
+        fmt.Printf("Error: %v\n", err)
         os.Exit(1)
     }
 
