@@ -94,10 +94,10 @@ func (t BambooTable) GetTemplate(author string, name string) (*DDBTemplate, erro
 	response, err := t.Client.GetItem(
 		context.TODO(), 
 		&dynamodb.GetItemInput{
-			TableName:                 aws.String(t.TableName),
+			TableName: aws.String(t.TableName),
 			Key: map[string]types.AttributeValue{
-				"Author": &types.AttributeValueMemberS{Value: "Author"},
-				"Name": &types.AttributeValueMemberS{Value: "Name"},
+				"Author": &types.AttributeValueMemberS{Value: author},
+				"Name": &types.AttributeValueMemberS{Value: name},
 			},
 		},
 	)
