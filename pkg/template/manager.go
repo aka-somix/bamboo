@@ -5,11 +5,14 @@
 package template
 
 import (
+	"context"
 	"errors"
 	"fmt"
 	"os"
+	"strings"
 
 	"github.com/aka-somix/bamboo/pkg/aws"
+	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
@@ -80,6 +83,20 @@ func (tm *templateManagerImpl) DownloadTemplate(author string, name string, fold
 func (tm *templateManagerImpl) CreateTemplate(t Template,  sourcePath string) error{
 
 	fmt.Printf("Creating template %s from folder: %s \n", t.Name, sourcePath)
+
+	cfg, _ := config.LoadDefaultConfig(context.TODO())
+
+	table := aws.BambooTable{
+		Client: dynamodb.NewFromConfig(cfg),
+		TableName: "BambooTemplatesTable",
+	}
+
+	table.PutTemplate(&aws.PutInput{
+		Author: t.Author,
+		Name: t.Name,
+		Description: t.Description,
+		S3Path: fmt.Sprintf("%s/%s", t.Author, strings.Replace(t.Name, " ", "-", -1)),
+	})
 
 	return nil
 }

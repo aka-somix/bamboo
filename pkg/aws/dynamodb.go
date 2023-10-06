@@ -14,26 +14,6 @@ type BambooTable struct {
 }
 
 
-func (t BambooTable) QueryTemplates(author string) ([]map[string]types.AttributeValue, error) {
-
-	response, err := t.Client.Query(
-		context.TODO(), 
-		&dynamodb.QueryInput{
-			TableName:                 aws.String(t.TableName),
-			ExpressionAttributeNames:  map[string]string{"#hashkey": "Author",},
-			ExpressionAttributeValues: map[string]types.AttributeValue{":hashkey": &types.AttributeValueMemberS{Value:author}},
-			KeyConditionExpression:    aws.String("#hashKey = :hashKeyValue"),
-		},
-	)
-
-	if err != nil {
-		// TODO aka-somix: better error management
-		return nil, err
-	}
-
-	return response.Items, nil
-}
-
 
 func (t BambooTable) Create() error {
 	_, err := t.Client.CreateTable(
@@ -76,4 +56,53 @@ func (t BambooTable) Create() error {
 	// TODO aka-somix: add error management
 
 	return err
+}
+
+
+func (t BambooTable) QueryTemplates(author string) ([]map[string]types.AttributeValue, error) {
+
+	response, err := t.Client.Query(
+		context.TODO(), 
+		&dynamodb.QueryInput{
+			TableName:                 aws.String(t.TableName),
+			ExpressionAttributeNames:  map[string]string{"#hashkey": "Author",},
+			ExpressionAttributeValues: map[string]types.AttributeValue{":hashkey": &types.AttributeValueMemberS{Value:author}},
+			KeyConditionExpression:    aws.String("#hashKey = :hashKeyValue"),
+		},
+	)
+
+	if err != nil {
+		// TODO aka-somix: better error management
+		return nil, err
+	}
+
+	return response.Items, nil
+}
+
+
+type PutInput struct {
+	Author string
+	Name string
+	Description string
+	S3Path string
+}
+
+func (t BambooTable) PutTemplate(input *PutInput) error {
+
+	_, err := t.Client.PutItem(
+		context.TODO(), 
+		&dynamodb.PutItemInput{
+			TableName: aws.String(t.TableName),
+			Item: map[string]types.AttributeValue{
+				"Author": &types.AttributeValueMemberS{Value: input.Author},
+				"Name": &types.AttributeValueMemberS{Value: input.Name},
+				"Description": &types.AttributeValueMemberS{Value: input.Description},
+				"S3Path": &types.AttributeValueMemberS{Value: input.S3Path},
+			},
+		},
+	)
+
+	// TODO aka-somix: add error management
+
+	return  err
 }
