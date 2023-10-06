@@ -4,6 +4,7 @@ import (
 	"context"
 
 	"github.com/aws/aws-sdk-go-v2/aws"
+	"github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb/types"
 )
@@ -12,7 +13,6 @@ type BambooTable struct {
 	Client *dynamodb.Client
 	TableName      string
 }
-
 
 
 func (t BambooTable) Create() error {
@@ -59,7 +59,7 @@ func (t BambooTable) Create() error {
 }
 
 
-func (t BambooTable) QueryTemplates(author string) ([]map[string]types.AttributeValue, error) {
+func (t BambooTable) QueryTemplates(author string) ([]DDBTemplate, error) {
 
 	response, err := t.Client.Query(
 		context.TODO(), 
@@ -67,27 +67,30 @@ func (t BambooTable) QueryTemplates(author string) ([]map[string]types.Attribute
 			TableName:                 aws.String(t.TableName),
 			ExpressionAttributeNames:  map[string]string{"#hashkey": "Author",},
 			ExpressionAttributeValues: map[string]types.AttributeValue{":hashkey": &types.AttributeValueMemberS{Value:author}},
-			KeyConditionExpression:    aws.String("#hashKey = :hashKeyValue"),
+			KeyConditionExpression:    aws.String("#hashkey = :hashkey"),
 		},
 	)
+
+	
+	if err != nil {
+		// TODO aka-somix: better error management
+		return nil, err
+	}
+	
+	var items []DDBTemplate
+
+	err = attributevalue.UnmarshalListOfMaps(response.Items, &items)
 
 	if err != nil {
 		// TODO aka-somix: better error management
 		return nil, err
 	}
 
-	return response.Items, nil
+	return items, nil
 }
 
 
-type PutInput struct {
-	Author string
-	Name string
-	Description string
-	S3Path string
-}
-
-func (t BambooTable) PutTemplate(input *PutInput) error {
+func (t BambooTable) PutTemplate(input *DDBTemplate) error {
 
 	_, err := t.Client.PutItem(
 		context.TODO(), 

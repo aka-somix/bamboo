@@ -16,6 +16,13 @@ import (
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
 )
 
+type TemplateManager interface {
+	ListTemplatesInfo(author string) []Template
+	GetTemplateInfo(author string, name string) Template
+	DownloadTemplate(author string, name string, folderPath string) error
+	CreateTemplate(t Template, sourcePath string) error
+}
+
 
 type templateManagerImpl struct {}
 
@@ -25,32 +32,21 @@ func NewTemplateManager() TemplateManager {
 }
 
 func (tm *templateManagerImpl) ListTemplatesInfo(author string) []Template {
-	templateTable := aws.BambooTable{
-		Client: dynamodb.New(dynamodb.Options{Region: "eu-west-1"}),
+
+	cfg, _ := config.LoadDefaultConfig(context.TODO())
+
+	table := aws.BambooTable{
+		Client: dynamodb.NewFromConfig(cfg),
 		TableName: "BambooTemplatesTable",
 	}
 
-	itemsFound, _ := templateTable.QueryTemplates(author)
+	itemsFound, err := table.QueryTemplates(author)
 
-	fmt.Println("Items Found on dynamodb:")
-	for _, item := range itemsFound {
-		fmt.Printf("%v \n", item)
+	if err != nil {
+		fmt.Printf("Error: %s \n", err)
 	}
 
-	return []Template{
-		{
-			Name: "Test",
-			Author: author,
-			Description: "A Random Test Template",
-			Path: "./ciao",
-		},
-		{
-			Name: "Test2",
-			Author: author,
-			Description: "A Random Test Template",
-			Path: "./ciao",
-		},
-	};
+	return templateFromDynamoDBList(itemsFound)
 }
 
 func (tm *templateManagerImpl) GetTemplateInfo(author string, name string) Template {
@@ -58,7 +54,6 @@ func (tm *templateManagerImpl) GetTemplateInfo(author string, name string) Templ
 			Name: name,
 			Author: author,
 			Description: "A Random Test Template",
-			Path: "./ciao",
 		}
 }
 
@@ -91,7 +86,7 @@ func (tm *templateManagerImpl) CreateTemplate(t Template,  sourcePath string) er
 		TableName: "BambooTemplatesTable",
 	}
 
-	table.PutTemplate(&aws.PutInput{
+	table.PutTemplate(&aws.DDBTemplate{
 		Author: t.Author,
 		Name: t.Name,
 		Description: t.Description,

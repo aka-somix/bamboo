@@ -33,7 +33,7 @@ var getCmd = &cobra.Command{
 		
 		fmt.Println()
 		fmt.Println("--------------------------------------------------------")
-		fmt.Printf("Name: %s \nDescription: %s \nPath: %s \n", template.Name, template.Description, template.Path)
+		fmt.Printf("Name: %s \nDescription: %s \n", template.Name, template.Description)
 		fmt.Println("--------------------------------------------------------")
 	},
 }
