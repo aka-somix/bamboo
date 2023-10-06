@@ -4,6 +4,8 @@ Copyright © 2023 NAME HERE <EMAIL ADDRESS>
 package cmd
 
 import (
+	"fmt"
+
 	"github.com/aka-somix/bamboo/pkg/prompt"
 	"github.com/aka-somix/bamboo/pkg/template"
 	"github.com/spf13/cobra"
@@ -29,14 +31,25 @@ var downloadCmd = &cobra.Command{
 			names = append(names, t.Name)
 		}
 
+		// Select which template to download
 		selectPromptContent := prompt.PromptContent{
 			ErrorMsg: "Please select a template.",
 			Label: "Found these templates. Select which one to download:",
 		}
-
 		selectedName := prompt.GetSelect(selectPromptContent, names)
 
-		tm.DownloadTemplate(author, selectedName, "./CIAO")
+		folderPromptContent := prompt.PromptContent{
+			ErrorMsg: "Please provide a valid folder name",
+			Label: fmt.Sprintf("Download path (%s)", selectedName),
+		}
+
+		folderPath := prompt.GetInput(folderPromptContent, prompt.ValidatePath)
+
+		if len(folderPath) == 0 {
+			folderPath = selectedName
+		}
+
+		tm.DownloadTemplate(author, selectedName, folderPath)
 	},
 }
 
