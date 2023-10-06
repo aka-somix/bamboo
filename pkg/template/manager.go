@@ -23,9 +23,7 @@ type TemplateManager interface {
 	CreateTemplate(t Template, sourcePath string) error
 }
 
-
 type templateManagerImpl struct {}
-
 
 func NewTemplateManager() TemplateManager {
 	return &templateManagerImpl{}
@@ -46,15 +44,26 @@ func (tm *templateManagerImpl) ListTemplatesInfo(author string) []Template {
 		fmt.Printf("Error: %s \n", err)
 	}
 
-	return templateFromDynamoDBList(itemsFound)
+	return templateFromDynamoDBList(*itemsFound)
 }
 
 func (tm *templateManagerImpl) GetTemplateInfo(author string, name string) Template {
-	return Template {
-			Name: name,
-			Author: author,
-			Description: "A Random Test Template",
-		}
+
+	cfg, _ := config.LoadDefaultConfig(context.TODO())
+
+	table := aws.BambooTable{
+		Client: dynamodb.NewFromConfig(cfg),
+		TableName: "BambooTemplatesTable",
+	}
+
+	itemFound, err := table.GetTemplate(author, name)
+
+	if err != nil {
+		fmt.Printf("Error: %s \n", err)
+	}
+
+
+	return templateFromDynamoDB(*itemFound)
 }
 
 func (tm *templateManagerImpl) DownloadTemplate(author string, name string, folderPath string) error{

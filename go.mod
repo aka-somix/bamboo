@@ -5,6 +5,7 @@ go 1.21.1
 require (
 	github.com/aws/aws-sdk-go-v2 v1.21.1
 	github.com/aws/aws-sdk-go-v2/config v1.18.43
+	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.41
 	github.com/aws/aws-sdk-go-v2/service/dynamodb v1.22.1
 	github.com/aws/aws-sdk-go-v2/service/s3 v1.40.0
 	github.com/manifoldco/promptui v0.9.0
@@ -13,10 +14,8 @@ require (
 )
 
 require (
-	github.com/aws/aws-sdk-go v1.45.24 // indirect
 	github.com/aws/aws-sdk-go-v2/aws/protocol/eventstream v1.4.13 // indirect
 	github.com/aws/aws-sdk-go-v2/credentials v1.13.41 // indirect
-	github.com/aws/aws-sdk-go-v2/feature/dynamodb/attributevalue v1.10.41 // indirect
 	github.com/aws/aws-sdk-go-v2/feature/ec2/imds v1.13.11 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/configsources v1.1.42 // indirect
 	github.com/aws/aws-sdk-go-v2/internal/endpoints/v2 v2.4.36 // indirect

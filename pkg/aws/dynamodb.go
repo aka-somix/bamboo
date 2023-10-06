@@ -59,7 +59,7 @@ func (t BambooTable) Create() error {
 }
 
 
-func (t BambooTable) QueryTemplates(author string) ([]DDBTemplate, error) {
+func (t BambooTable) QueryTemplates(author string) (*[]DDBTemplate, error) {
 
 	response, err := t.Client.Query(
 		context.TODO(), 
@@ -86,9 +86,37 @@ func (t BambooTable) QueryTemplates(author string) ([]DDBTemplate, error) {
 		return nil, err
 	}
 
-	return items, nil
+	return &items, nil
 }
 
+func (t BambooTable) GetTemplate(author string, name string) (*DDBTemplate, error) {
+
+	response, err := t.Client.GetItem(
+		context.TODO(), 
+		&dynamodb.GetItemInput{
+			TableName:                 aws.String(t.TableName),
+			Key: map[string]types.AttributeValue{
+				"Author": &types.AttributeValueMemberS{Value: "Author"},
+				"Name": &types.AttributeValueMemberS{Value: "Name"},
+			},
+		},
+	)
+
+	if err != nil {
+		// TODO aka-somix: better error management
+		return nil, err
+	}
+
+	var item DDBTemplate
+	err = attributevalue.UnmarshalMap(response.Item, &item)
+
+	if err != nil {
+		// TODO aka-somix: better error management
+		return nil, err
+	}
+
+	return &item, nil
+}
 
 func (t BambooTable) PutTemplate(input *DDBTemplate) error {
 
