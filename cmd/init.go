@@ -11,6 +11,7 @@ import (
 	"github.com/aka-somix/bamboo/pkg/aws"
 	"github.com/aws/aws-sdk-go-v2/config"
 	"github.com/aws/aws-sdk-go-v2/service/dynamodb"
+	"github.com/aws/aws-sdk-go-v2/service/s3"
 	"github.com/spf13/cobra"
 )
 
@@ -26,17 +27,27 @@ var initCmd = &cobra.Command{
 
 		cfg, _ := config.LoadDefaultConfig(context.TODO())
 
-		btable := aws.BambooTable{
+		table := aws.BambooTable{
 			Client: dynamodb.NewFromConfig(cfg),
 			TableName: "BambooTemplatesTable",
 		}
 
-		if err := btable.Create(); err != nil {
+		bucket := aws.BambooBucket{
+			Client: s3.NewFromConfig(cfg),
+			BucketName: fmt.Sprintf("bamboo-templates-bucket-%s", cfg.Region), // TODO aka-somix: add account number or other specific info
+		}
+
+		if err := table.Create(); err != nil {
 			fmt.Printf("Error while creating DynamoDB table: %v \n", err)
 			os.Exit(1)
 		}
-		
 		fmt.Println("DynamoDB table successfully created")
+		
+		if err := bucket.Create(cfg.Region); err != nil {
+			fmt.Printf("Error while creating S3 Bucket: %v \n", err)
+			os.Exit(1)
+		}
+		fmt.Println("S3 Bucket successfully created")
 	},
 }
 

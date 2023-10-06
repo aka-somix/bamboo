@@ -73,10 +73,7 @@ func (t BambooTable) Create() error {
 		}, 
 	)
 
-	if err != nil {
-		// TODO aka-somix: better error management
-		return err
-	}
+	// TODO aka-somix: add error management
 
-	return nil
+	return err
 }
