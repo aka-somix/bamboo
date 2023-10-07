@@ -34,11 +34,13 @@ func Execute() {
 	}
 }
 
+func SetVersion(v string) {
+	rootCmd.Version = v
+}
+
 func init() {
 
 	// Here you will define your flags and configuration settings.
 	// Cobra supports persistent flags, which, if defined here,
 	// will be global for your application.
-
-	rootCmd.Version = "alpha-1.0.0"
 }
