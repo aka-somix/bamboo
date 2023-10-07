@@ -80,10 +80,6 @@ func ZipFolder(origin string, zipDest string) error{
 }
 
 func UnzipToFolder(origin string, destination string) error{
-    // Create destiny directory
-    if err := os.Mkdir(destination, 0777); err != nil{
-        return err
-    }
 
     // Open zip file
     zipFile, err := zip.OpenReader(origin)

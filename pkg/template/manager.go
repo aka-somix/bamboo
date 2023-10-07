@@ -77,9 +77,18 @@ func (tm *templateManagerImpl) DownloadTemplate(author string, name string, fold
 		}
     }
 
-	template := tm.GetTemplateInfo(author, name)
+	t := tm.GetTemplateInfo(author, name)
 
-	fmt.Printf("Downloading template %s to folder: %s \n", template.Name, folderPath)
+	fmt.Printf("Downloading template %s to folder: %s \n", t.Name, folderPath)
+
+	s3Path := fmt.Sprintf("%s/%s.zip", t.Author, strings.Replace(t.Name, " ", "-", -1))
+
+	// Download from Origin
+	err := FilesPacker{path: folderPath}.DownloadAndUnpack(s3Path)
+
+	if err != nil {
+		return err
+	}
 
 	return nil
 }

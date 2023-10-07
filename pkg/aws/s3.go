@@ -2,6 +2,7 @@ package aws
 
 import (
 	"context"
+	"io"
 	"log"
 	"os"
 
@@ -64,5 +65,31 @@ func (b BambooBucket) UploadFile(objectKey string, localFileName string) error {
 				localFileName, b.BucketName, objectKey, err)
 		}
 	}
+	return err
+}
+
+
+// DownloadFile gets an object from a bucket and stores it in a local file.
+func (b BambooBucket) DownloadFile(objectKey string, fileName string) error {
+	result, err := b.Client.GetObject(context.TODO(), &s3.GetObjectInput{
+		Bucket: aws.String(b.BucketName),
+		Key:    aws.String(objectKey),
+	})
+	if err != nil {
+		log.Printf("Couldn't get object %v:%v. Here's why: %v\n", b.BucketName, objectKey, err)
+		return err
+	}
+	defer result.Body.Close()
+	file, err := os.Create(fileName)
+	if err != nil {
+		log.Printf("Couldn't create file %v. Here's why: %v\n", fileName, err)
+		return err
+	}
+	defer file.Close()
+	body, err := io.ReadAll(result.Body)
+	if err != nil {
+		log.Printf("Couldn't read object body from %v. Here's why: %v\n", objectKey, err)
+	}
+	_, err = file.Write(body)
 	return err
 }
