@@ -71,7 +71,7 @@ func (tm *templateManagerImpl) DownloadTemplate(author string, name string, fold
 	// if the folder specified does not exist
 	if _, err := os.Stat(folderPath); os.IsNotExist(err) {
         // ...try create the folder
-		if err := os.MkdirAll(folderPath, os.ModePerm); err != nil {
+		if err := os.MkdirAll(folderPath, 0777); err != nil {
 			// ... catch creation errors
 			return errors.New("folder does not exist and could not be created")
 		}
@@ -95,6 +95,7 @@ func (tm *templateManagerImpl) CreateTemplate(t Template,  sourcePath string) er
 		TableName: "BambooTemplatesTable",
 	}
 
+	// Create template
 	table.PutTemplate(&aws.DDBTemplate{
 		Author: t.Author,
 		Name: t.Name,
@@ -102,5 +103,8 @@ func (tm *templateManagerImpl) CreateTemplate(t Template,  sourcePath string) er
 		S3Path: fmt.Sprintf("%s/%s", t.Author, strings.Replace(t.Name, " ", "-", -1)),
 	})
 
+	// Upload to Origin
+	FilesPacker{path: sourcePath}.PackAndUpload(t.Name)
+	
 	return nil
 }

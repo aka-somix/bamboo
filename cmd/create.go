@@ -46,6 +46,7 @@ var createCmd = &cobra.Command{
 			Author: author,
 		}
 
+		// Create the new Template
 		tm.CreateTemplate(newTemplate, path)
 	},
 }

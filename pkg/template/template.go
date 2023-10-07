@@ -10,7 +10,7 @@ type Template struct {
 }
 
 
-func templateFromDynamoDB(item aws.DDBTemplate) Template{
+func templateFromDynamoDB(item aws.DDBTemplate) Template {
 	return Template{
 		Name: item.Name,
 		Author: item.Author,
@@ -18,7 +18,7 @@ func templateFromDynamoDB(item aws.DDBTemplate) Template{
 	}
 }
 
-func templateFromDynamoDBList(items []aws.DDBTemplate) []Template{
+func templateFromDynamoDBList(items []aws.DDBTemplate) []Template {
 	var templateList []Template
 
 	for _, item := range items {
