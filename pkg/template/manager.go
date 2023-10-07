@@ -95,16 +95,18 @@ func (tm *templateManagerImpl) CreateTemplate(t Template,  sourcePath string) er
 		TableName: "BambooTemplatesTable",
 	}
 
+	s3Path := fmt.Sprintf("%s/%s.zip", t.Author, strings.Replace(t.Name, " ", "-", -1))
+
 	// Create template
 	table.PutTemplate(&aws.DDBTemplate{
 		Author: t.Author,
 		Name: t.Name,
 		Description: t.Description,
-		S3Path: fmt.Sprintf("%s/%s", t.Author, strings.Replace(t.Name, " ", "-", -1)),
+		S3Path: s3Path,
 	})
 
 	// Upload to Origin
-	FilesPacker{path: sourcePath}.PackAndUpload(t.Name)
+	FilesPacker{path: sourcePath}.PackAndUpload(t.Name, s3Path)
 	
 	return nil
 }
