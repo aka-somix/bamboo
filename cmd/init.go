@@ -18,8 +18,8 @@ import (
 // initCmd represents the init command
 var initCmd = &cobra.Command{
 	Use:   "init",
-	Short: "initialize the AWS infrastructure",
-	Long: `initialize the AWS infrastructure`,
+	Short: "Initialize the underlying back-end infrastructure to manage your scaffolds",
+	Long: `The init command is used to create the back-end infrastructure to host and manage your scaffolds`,
 
 
 	Run: func(cmd *cobra.Command, args []string) {
